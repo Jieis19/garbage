@@ -56,9 +56,20 @@ def callback():
 def handle_message(event):
 
     if event.message.text == "垃圾車":
-       result = fetch_garbage_truck_info()
-       line_bot_api.reply_message(event.reply_token,TextSendMessage(text=f"目前垃圾車: {result}"))
-       return
+        line_bot_api.reply_message(
+            event.reply_token,
+            TextSendMessage(text="🔍 正在查詢垃圾車位置，請稍候...")
+        )
+        
+        # 再去抓資料
+        result = fetch_garbage_truck_info()
+        
+        # 把結果「推播」給使用者
+        line_bot_api.push_message(
+            event.source.user_id,
+            TextSendMessage(text=f"目前垃圾車資訊：\n{result}")
+        )
+    
     
 # 收到加好友事件回覆
 @handler.add(FollowEvent)
