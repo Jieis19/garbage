@@ -11,9 +11,9 @@ from linebot.models.events import FollowEvent
 app = Flask(__name__)
 
 # 使用环境变量（推荐）
-HANNEL_SECRET = "3e312784b5d0a822c5a2971845084a7e"
+HANNEL_SECRET = "37386e7c6e3281ab80eb0ba61f3a00a3"
 
-CHANNEL_ACCESS_TOKEN = "DDS2tqAC4BKlE8EJMFPL+SrTWbzBiYjUsXK9o6NlPX2h0LbG4wYAPGpMavazrKqUmayd5mxe7oJUEK9zMq8JRq2bpOYnUxCslrHJ5d5+iDRo7JX/sRgWmZw0CVy7+J+8zyzpFwmlea3tFPHRIND0EwdB04t89/1O/w1cDnyilFU="
+CHANNEL_ACCESS_TOKEN = "wvyDe3P/k8r8Cu4nvfGdPdhoJkPrvsRXeqbVqksAz4DZrOkU706pQeQseLptAg9ulWF2aVLWezArTAJTu88FrSc825WtVct/x7pOGZUHjo/goY+nyENdcAv+X+/LuL0rLPCc9InUp7QPHUfNXKdlUgdB04t89/1O/w1cDnyilFU="
 
 line_bot_api = LineBotApi(CHANNEL_ACCESS_TOKEN)
 handler = WebhookHandler(HANNEL_SECRET)
