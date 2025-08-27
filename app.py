@@ -31,7 +31,7 @@ def haversine(lon1, lat1, lon2, lat2):
 def calculate_time(distance_km, speed_kmh=30):
     return (distance_km / speed_kmh) * 60
 
-def is_near_track(lon, lat, track, threshold=10):
+def is_near_track(lon, lat, track, threshold=3):
     for path in track:
         for point in path:
             track_lon = float(point["X"])
@@ -65,7 +65,7 @@ def handle_message(event):
 def handle_follow(event):
     line_bot_api.reply_message(
         event.reply_token,
-        TextSendMessage(text="謝謝你加我好友！享受到垃圾的樂趣")
+        TextSendMessage(text="謝謝你加我好友！享受到垃圾的樂趣\n輸入垃圾車獲取時間")
     )
 
 def fetch_garbage_truck_info():
