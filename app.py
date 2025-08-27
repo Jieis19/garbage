@@ -79,7 +79,7 @@ def fetch_garbage_truck_info():
         # 获取车辆信息
         response = requests.post(url_location, headers=headers, data=payload_location, timeout=10,verify=False)
         if response.status_code != 200:
-            return "请求失败，HTTP 状态码：" + str(response.status_code)
+            return "請求失敗，HTTP 狀態碼：" + str(response.status_code)
 
         data = response.json()
         target_x = "120.95498"
@@ -97,19 +97,18 @@ def fetch_garbage_truck_info():
                     lon2 = float(target_x)
                     distance = haversine(lon1, lat1, lon2, lat2)
                     time_minutes = calculate_time(distance)
-                    output += f"找到符合条件的车辆：{car['carNo']}\n"
-                    output += f"路线名称：{car.get('routeName')}\n"
-                    output += f"两点之间距离：{distance:.3f} 公里\n"
-                    output += f"预计行驶时间（30 km/h）：{time_minutes:.2f} 分钟\n\n"
+                    output += f"找到符合條件的車輛：{car['carNo']}\n"
+                    output += f"路線名稱：{car.get('routeName')}\n"
+                    output += f"兩點之間距離：{distance:.3f} 公里\n"
+                    output += f"預計行駛時間（30 km/h）：{time_minutes:.2f} 分鐘\n\n"
 
             if not output:
-                output = "没有发现符合条件名称\n正在自动搜索附近车辆...\n"
+                output = "沒有發現符合條件名稱\n正在自動搜尋附近車輛...\n"
 
         else:
-            output = "没有发现符合条件名称\n正在自动搜索附近车辆...\n"
+            output = "沒有發現符合條件名稱\n正在自動搜尋附近車輛...\n"
 
         if find_flag:
-            # 获取轨迹信息
             track_response = requests.post(url_track, headers=headers, data=payload_track, timeout=10,verify=False)
             track_data = track_response.json()
             car_response = requests.post(url_location, headers=headers, data=payload_location, timeout=10,verify=False)
@@ -123,7 +122,7 @@ def fetch_garbage_truck_info():
                 if is_near_track(lon, lat, tracks):
                     nearby_cars.append(car)
 
-            output = "在轨迹附近的车辆信息：\n"
+            output = "在軌跡附近的車輛訊息：\n"
             for car in nearby_cars:
                 lat1 = float(car['lat'])
                 lon1 = float(car['lon'])
@@ -131,13 +130,13 @@ def fetch_garbage_truck_info():
                 lon2 = float(target_x)
                 distance = haversine(lon1, lat1, lon2, lat2)
                 time_minutes = calculate_time(distance)
-                output += f"车辆编号：{car['carNo']}, 位置：({lat1}, {lon1})\n"
-                output += f"两点之间距离：{distance:.3f} 公里\n"
-                output += f"预计行驶时间（30 km/h）：{time_minutes:.2f} 分钟\n\n"
+                output += f"車輛編號：{car['carNo']}, 位置：({lat1}, {lon1})\n"
+                output += f"兩點之間距離：{distance:.3f} 公里\n"
+                output += f"預計行駛時間（30 km/h）：{time_minutes:.2f} 分鐘\n\n"
 
         return output
 
     except Exception as e:
-        return f"发生错误：{str(e)}"
+        return f"發生錯誤：{str(e)}"
 
 
