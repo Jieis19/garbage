@@ -1,5 +1,9 @@
 from flask import Flask, jsonify
 import requests
+import urllib3
+
+# 關閉 SSL 警告
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 app = Flask(__name__)
 
@@ -13,7 +17,7 @@ def garbage():
     payload = "rId=all"
     headers = {"Content-Type": "application/x-www-form-urlencoded"}
     try:
-        res = requests.post(url, headers=headers, data=payload, timeout=10)
+        res = requests.post(url, headers=headers, data=payload, timeout=10, verify=False)
         return jsonify(res.json())
     except Exception as e:
         return jsonify({"error": str(e)})
