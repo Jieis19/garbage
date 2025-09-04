@@ -49,27 +49,6 @@ def callback():
         print("Invalid signature!")
         abort(400)
     return 'OK'
-@app.route("/plot")
-def send_plot(lat2,lon2):
-    # 範例：台北 (25.033, 121.565) 到 高雄 (22.627, 120.301)
-    lat1, lon1, label1 = 24.819735, 120.954769, "chayi"
-    label2 = "car"
-    lat3, lon3, label3 = 24.819032, 120.954563,'park'
-
-    distance = haversine(lon1, lat1, lon2, lat2)
-
-    buf = io.BytesIO()
-    plt.figure(figsize=(6,6))
-    plt.scatter([lon1, lon2,lon3], [lat1, lat2,lat3], color="red")
-    plt.plot([lon1, lon2,lon3], [lat1, lat2,lat3], "b--")
-    plt.text(lon1, lat1, f" {label1}", color="red")
-    plt.text(lon2, lat2, f" {label2}", color="red")
-    plt.text(lon3, lat3, f" {label3}", color="red")
-    plt.text((lon1+lon2)/2, (lat1+lat2)/2, f"{distance:.2f} km", color="blue", ha="center")
-    plt.savefig(buf, format="png")
-    plt.close()
-    buf.seek(0)
-    return send_file(buf, mimetype="image/png")    
 # 收到文字訊息回覆
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
@@ -103,7 +82,27 @@ def handle_follow(event):
         event.reply_token,
         TextSendMessage(text="謝謝你加我好友！享受到垃圾的樂趣\n輸入垃圾車獲取時間")
     )
+@app.route("/plot")
+def send_plot(lat2,lon2):
+    # 範例：台北 (25.033, 121.565) 到 高雄 (22.627, 120.301)
+    lat1, lon1, label1 = 24.819735, 120.954769, "chayi"
+    label2 = "car"
+    lat3, lon3, label3 = 24.819032, 120.954563,'park'
 
+    distance = haversine(lon1, lat1, lon2, lat2)
+
+    buf = io.BytesIO()
+    plt.figure(figsize=(6,6))
+    plt.scatter([lon1, lon2,lon3], [lat1, lat2,lat3], color="red")
+    plt.plot([lon1, lon2,lon3], [lat1, lat2,lat3], "b--")
+    plt.text(lon1, lat1, f" {label1}", color="red")
+    plt.text(lon2, lat2, f" {label2}", color="red")
+    plt.text(lon3, lat3, f" {label3}", color="red")
+    plt.text((lon1+lon2)/2, (lat1+lat2)/2, f"{distance:.2f} km", color="blue", ha="center")
+    plt.savefig(buf, format="png")
+    plt.close()
+    buf.seek(0)
+    return send_file(buf, mimetype="image/png")    
 def fetch_garbage_truck_info():
     url_location = "https://7966.hccg.gov.tw/WEB/_IMP/API/CleanWeb/getCarLocation"
     url_track = "https://7966.hccg.gov.tw/WEB/_IMP/API/CleanWeb/getRouteTrack"
