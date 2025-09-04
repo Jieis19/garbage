@@ -65,17 +65,10 @@ def handle_message(event):
         
         # 把結果「推播」給使用者
         line_bot_api.push_message(
-            event.source.user_id,
+            user_id,
             TextSendMessage(text=f"目前垃圾車資訊：\n{result}")
         )
-
-        image_url = "https://garbage-xcnc.onrender.com/plot"
-        message = ImageSendMessage(
-            original_content_url=image_url,
-            preview_image_url=image_url
-        )
-        line_bot_api.push_message(user_id, message)
-    
+  
     
 # 收到加好友事件回覆
 @handler.add(FollowEvent)
