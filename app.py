@@ -73,7 +73,7 @@ def handle_message(event):
             original_content_url=image_url,
             preview_image_url=image_url
         )
-        line_bot_api.push_message(user_id,, message)
+        line_bot_api.push_message(user_id, message)
     
     
 # 收到加好友事件回覆
