@@ -113,7 +113,7 @@ def fetch_garbage_truck_info():
     payload_location = 'rId=all'
     payload_track = 'rId=112'
     headers = {'Content-Type': 'application/x-www-form-urlencoded'}
-
+    global lon1,lat1
     try:
         # 获取车辆信息
         response = requests.post(url_location, headers=headers, data=payload_location, timeout=10,verify=False)
