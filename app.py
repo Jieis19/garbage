@@ -134,7 +134,7 @@ def fetch_garbage_truck_info():
                     lon1 = float(car['lon'])
                     lat2 = float(target_y)
                     lon2 = float(target_x)
-                    send_plot(lat1,lon1)
+                    send_plot()
                     distance = haversine(lon1, lat1, lon2, lat2)
                     time_minutes = calculate_time(distance)
                     output += f"找到符合條件的車輛：{car['carNo']}\n"
@@ -169,7 +169,7 @@ def fetch_garbage_truck_info():
                 lat2 = float(target_y)
                 lon2 = float(target_x)
                 distance = haversine(lon1, lat1, lon2, lat2)
-                send_plot(lat1,lon1)
+                send_plot()
                 time_minutes = calculate_time(distance)
                 output += f"車輛編號：{car['carNo']}\n"
                 output += f"兩點之間距離：{distance:.3f} 公里\n"
