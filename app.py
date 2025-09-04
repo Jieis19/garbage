@@ -1,8 +1,8 @@
 import os
 import math
 import requests
-from flask import Flask, request, abort
-
+from flask import Flask, request, abort,send_file
+import matplotlib.pyplot as plt
 # 使用 v3 SDK 的模块
 from linebot import LineBotApi, WebhookHandler
 from linebot.exceptions import InvalidSignatureError
@@ -27,7 +27,6 @@ def haversine(lon1, lat1, lon2, lat2):
     c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
     distance = R * c
     return distance
-
 def calculate_time(distance_km, speed_kmh=30):
     return (distance_km / speed_kmh) * 60
 
@@ -51,6 +50,27 @@ def callback():
         print("Invalid signature!")
         abort(400)
     return 'OK'
+@app.route("/plot")
+def send_plot(lat2,lon2):
+    # 範例：台北 (25.033, 121.565) 到 高雄 (22.627, 120.301)
+    lat1, lon1, label1 = 24.819735, 120.954769, "chayi"
+    label2 = "car"
+    lat3, lon3, label3 = 24.819032, 120.954563,'park'
+
+    distance = haversine(lon1, lat1, lon2, lat2)
+
+    buf = io.BytesIO()
+    plt.figure(figsize=(6,6))
+    plt.scatter([lon1, lon2,lon3], [lat1, lat2,lat3], color="red")
+    plt.plot([lon1, lon2,lon3], [lat1, lat2,lat3], "b--")
+    plt.text(lon1, lat1, f" {label1}", color="red")
+    plt.text(lon2, lat2, f" {label2}", color="red")
+    plt.text(lon3, lat3, f" {label3}", color="red")
+    plt.text((lon1+lon2)/2, (lat1+lat2)/2, f"{distance:.2f} km", color="blue", ha="center")
+    plt.savefig(buf, format="png")
+    plt.close()
+    buf.seek(0)
+    return send_file(buf, mimetype="image/png")    
 # 收到文字訊息回覆
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
@@ -69,6 +89,12 @@ def handle_message(event):
             event.source.user_id,
             TextSendMessage(text=f"目前垃圾車資訊：\n{result}")
         )
+        image_url = "https://garbage-xcnc.onrender.com/plot"
+        message = ImageSendMessage(
+            original_content_url=image_url,
+            preview_image_url=image_url
+        )
+        line_bot_api.reply_message(event.reply_token, message)
     
     
 # 收到加好友事件回覆
@@ -93,8 +119,8 @@ def fetch_garbage_truck_info():
             return "請求失敗，HTTP 狀態碼：" + str(response.status_code)
 
         data = response.json()
-        target_x = "120.95498"
-        target_y = "24.8316435"
+        target_x = "120.954769"
+        target_y = "24.819735"
         find_flag = True
 
         if data.get("statusCode") == 1 and "data" in data and "car" in data["data"]:
@@ -106,6 +132,7 @@ def fetch_garbage_truck_info():
                     lon1 = float(car['lon'])
                     lat2 = float(target_y)
                     lon2 = float(target_x)
+                    send_plot(lat1,lon1)
                     distance = haversine(lon1, lat1, lon2, lat2)
                     time_minutes = calculate_time(distance)
                     output += f"找到符合條件的車輛：{car['carNo']}\n"
