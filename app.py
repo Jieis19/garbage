@@ -77,6 +77,9 @@ def handle_follow(event):
         event.reply_token,
         TextSendMessage(text="謝謝你加我好友！享受到垃圾的樂趣\n輸入垃圾車獲取時間")
     )
+# -----------------------------
+# 生成地圖圖片函數
+# -----------------------------
 def generate_plot_image(lat2, lon2):
     lat1, lon1, label1 = 24.819735, 120.954769, "chayi"
     label2 = "car"
@@ -96,6 +99,16 @@ def generate_plot_image(lat2, lon2):
     plt.close()
     buf.seek(0)
     return buf
+
+# -----------------------------
+# Flask route /plot
+# -----------------------------
+@app.route("/plot")
+def send_plot():
+    lat2 = float(request.args.get("lat2", 22.627))  # 預設高雄
+    lon2 = float(request.args.get("lon2", 120.301))
+    buf = generate_plot_image(lat2, lon2)
+    return send_file(buf, mimetype="image/png")
 def fetch_garbage_truck_info(user_id=None):
     url_location = "https://7966.hccg.gov.tw/WEB/_IMP/API/CleanWeb/getCarLocation"
     url_track = "https://7966.hccg.gov.tw/WEB/_IMP/API/CleanWeb/getRouteTrack"
@@ -131,11 +144,11 @@ def fetch_garbage_truck_info(user_id=None):
                     output += f"預計行駛時間（30 km/h）：{time_minutes:.2f} 分鐘\n\n"
                     # 推播圖片給 Line
                     if user_id:
-                        buf = generate_plot_image(lat1, lon1)
-                        img_b64 = base64.b64encode(buf.getvalue()).decode()
+                        base_url = "https://你的網站域名/plot"  # <-- 改成你部署的 HTTPS 網址
+                        image_url = f"{base_url}?lat2={lat1}&lon2={lon1}"
                         image_message = ImageSendMessage(
-                            original_content_url=f"data:image/png;base64,{img_b64}",
-                            preview_image_url=f"data:image/png;base64,{img_b64}"
+                            original_content_url=image_url,
+                            preview_image_url=image_url
                         )
                         line_bot_api.push_message(user_id, image_message)
             if not output:
@@ -167,11 +180,11 @@ def fetch_garbage_truck_info(user_id=None):
                 distance = haversine(lon1, lat1, lon2, lat2)
                 # 推播圖片給 Line
                 if user_id:
-                    buf = generate_plot_image(lat1, lon1)
-                    img_b64 = base64.b64encode(buf.getvalue()).decode()
+                    base_url = "https://你的網站域名/plot"  # <-- 改成你部署的 HTTPS 網址
+                    image_url = f"{base_url}?lat2={lat1}&lon2={lon1}"
                     image_message = ImageSendMessage(
-                        original_content_url=f"data:image/png;base64,{img_b64}",
-                        preview_image_url=f"data:image/png;base64,{img_b64}"
+                        original_content_url=image_url,
+                        preview_image_url=image_url
                     )
                     line_bot_api.push_message(user_id, image_message)
                 time_minutes = calculate_time(distance)
