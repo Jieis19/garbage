@@ -58,7 +58,7 @@ def handle_message(event):
             event.reply_token,
             TextSendMessage(text="🔍 正在查詢垃圾車位置，請稍候...")
         )
-        
+        user_id = event.source.user_id        
         # 再去抓資料
         result = fetch_garbage_truck_info(user_id)
         
@@ -67,7 +67,7 @@ def handle_message(event):
             event.source.user_id,
             TextSendMessage(text=f"目前垃圾車資訊：\n{result}")
         )
-        user_id = event.source.user_id
+
         image_url = "https://garbage-xcnc.onrender.com/plot"
         message = ImageSendMessage(
             original_content_url=image_url,
