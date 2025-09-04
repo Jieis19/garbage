@@ -96,12 +96,6 @@ def generate_plot_image(lat2, lon2):
     plt.close()
     buf.seek(0)
     return buf
-@app.route("/plot")
-def send_plot():
-    lat2 = float(request.args.get("lat2", 22.627))  # 預設高雄
-    lon2 = float(request.args.get("lon2", 120.301))
-    buf = generate_plot_image(lat2, lon2)
-    return send_file(buf, mimetype="image/png")    
 def fetch_garbage_truck_info(user_id=None):
     url_location = "https://7966.hccg.gov.tw/WEB/_IMP/API/CleanWeb/getCarLocation"
     url_track = "https://7966.hccg.gov.tw/WEB/_IMP/API/CleanWeb/getRouteTrack"
@@ -129,7 +123,6 @@ def fetch_garbage_truck_info(user_id=None):
                     lon1 = float(car['lon'])
                     lat2 = float(target_y)
                     lon2 = float(target_x)
-                    send_plot(lat1,lon1)
                     distance = haversine(lon1, lat1, lon2, lat2)
                     time_minutes = calculate_time(distance)
                     output += f"找到符合條件的車輛：{car['carNo']}\n"
