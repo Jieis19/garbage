@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 # 使用 v3 SDK 的模块
 from linebot import LineBotApi, WebhookHandler
 from linebot.exceptions import InvalidSignatureError
-from linebot.models import MessageEvent, TextMessage, TextSendMessage
+from linebot.models import MessageEvent, TextMessage, TextSendMessage, ImageSendMessage
 from linebot.models.events import FollowEvent
 app = Flask(__name__)
 
