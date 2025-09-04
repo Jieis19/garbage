@@ -144,7 +144,7 @@ def fetch_garbage_truck_info(user_id=None):
                     output += f"預計行駛時間（30 km/h）：{time_minutes:.2f} 分鐘\n\n"
                     # 推播圖片給 Line
                     if user_id:
-                        base_url = "https://你的網站域名/plot"  # <-- 改成你部署的 HTTPS 網址
+                        base_url = "https://garbage-xcnc.onrender.com/plot"  # <-- 改成你部署的 HTTPS 網址
                         image_url = f"{base_url}?lat2={lat1}&lon2={lon1}"
                         image_message = ImageSendMessage(
                             original_content_url=image_url,
