@@ -3,4 +3,3 @@ requests
 gunicorn
 line-bot-sdk
 matplotlib
-io
