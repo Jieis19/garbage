@@ -1,4 +1,5 @@
 import os,math,io
+import base64
 import requests
 from flask import Flask, request, abort,send_file
 import matplotlib.pyplot as plt
