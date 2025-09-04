@@ -60,7 +60,7 @@ def handle_message(event):
         )
         
         # 再去抓資料
-        result = fetch_garbage_truck_info()
+        result = fetch_garbage_truck_info(user_id)
         
         # 把結果「推播」給使用者
         line_bot_api.push_message(
@@ -83,19 +83,17 @@ def handle_follow(event):
         event.reply_token,
         TextSendMessage(text="謝謝你加我好友！享受到垃圾的樂趣\n輸入垃圾車獲取時間")
     )
-@app.route("/plot")
-def send_plot(lat2,lon2):
-    # 範例：台北 (25.033, 121.565) 到 高雄 (22.627, 120.301)
+def generate_plot_image(lat2, lon2):
     lat1, lon1, label1 = 24.819735, 120.954769, "chayi"
     label2 = "car"
-    lat3, lon3, label3 = 24.819032, 120.954563,'park'
+    lat3, lon3, label3 = 24.819032, 120.954563, 'park'
 
     distance = haversine(lon1, lat1, lon2, lat2)
 
     buf = io.BytesIO()
     plt.figure(figsize=(6,6))
-    plt.scatter([lon1, lon2,lon3], [lat1, lat2,lat3], color="red")
-    plt.plot([lon1, lon2,lon3], [lat1, lat2,lat3], "b--")
+    plt.scatter([lon1, lon2, lon3], [lat1, lat2, lat3], color="red")
+    plt.plot([lon1, lon2, lon3], [lat1, lat2, lat3], "b--")
     plt.text(lon1, lat1, f" {label1}", color="red")
     plt.text(lon2, lat2, f" {label2}", color="red")
     plt.text(lon3, lat3, f" {label3}", color="red")
@@ -103,8 +101,14 @@ def send_plot(lat2,lon2):
     plt.savefig(buf, format="png")
     plt.close()
     buf.seek(0)
+    return buf
+@app.route("/plot")
+def send_plot():
+    lat2 = float(request.args.get("lat2", 22.627))  # 預設高雄
+    lon2 = float(request.args.get("lon2", 120.301))
+    buf = generate_plot_image(lat2, lon2)
     return send_file(buf, mimetype="image/png")    
-def fetch_garbage_truck_info():
+def fetch_garbage_truck_info(user_id=None):
     url_location = "https://7966.hccg.gov.tw/WEB/_IMP/API/CleanWeb/getCarLocation"
     url_track = "https://7966.hccg.gov.tw/WEB/_IMP/API/CleanWeb/getRouteTrack"
     payload_location = 'rId=all'
@@ -138,7 +142,15 @@ def fetch_garbage_truck_info():
                     output += f"路線名稱：{car.get('routeName')}\n"
                     output += f"兩點之間距離：{distance:.3f} 公里\n"
                     output += f"預計行駛時間（30 km/h）：{time_minutes:.2f} 分鐘\n\n"
-
+                    # 推播圖片給 Line
+                    if user_id:
+                        buf = generate_plot_image(lat1, lon1)
+                        img_b64 = base64.b64encode(buf.getvalue()).decode()
+                        image_message = ImageSendMessage(
+                            original_content_url=f"data:image/png;base64,{img_b64}",
+                            preview_image_url=f"data:image/png;base64,{img_b64}"
+                        )
+                        line_bot_api.push_message(user_id, image_message)
             if not output:
                 output = "沒有發現符合條件名稱\n正在自動搜尋附近車輛...\n"
 
@@ -166,7 +178,15 @@ def fetch_garbage_truck_info():
                 lat2 = float(target_y)
                 lon2 = float(target_x)
                 distance = haversine(lon1, lat1, lon2, lat2)
-                send_plot(lat1,lon1)
+                # 推播圖片給 Line
+                if user_id:
+                    buf = generate_plot_image(lat1, lon1)
+                    img_b64 = base64.b64encode(buf.getvalue()).decode()
+                    image_message = ImageSendMessage(
+                        original_content_url=f"data:image/png;base64,{img_b64}",
+                        preview_image_url=f"data:image/png;base64,{img_b64}"
+                    )
+                    line_bot_api.push_message(user_id, image_message)
                 time_minutes = calculate_time(distance)
                 output += f"車輛編號：{car['carNo']}\n"
                 output += f"兩點之間距離：{distance:.3f} 公里\n"
