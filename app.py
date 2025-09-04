@@ -67,12 +67,13 @@ def handle_message(event):
             event.source.user_id,
             TextSendMessage(text=f"目前垃圾車資訊：\n{result}")
         )
+        user_id = event.source.user_id
         image_url = "https://garbage-xcnc.onrender.com/plot"
         message = ImageSendMessage(
             original_content_url=image_url,
             preview_image_url=image_url
         )
-        line_bot_api.reply_message(event.reply_token, message)
+        line_bot_api.push_message(user_id,, message)
     
     
 # 收到加好友事件回覆
@@ -165,8 +166,9 @@ def fetch_garbage_truck_info():
                 lat2 = float(target_y)
                 lon2 = float(target_x)
                 distance = haversine(lon1, lat1, lon2, lat2)
+                send_plot(lat1,lon1)
                 time_minutes = calculate_time(distance)
-                output += f"車輛編號：{car['carNo']}, 位置：({lat1}, {lon1})\n"
+                output += f"車輛編號：{car['carNo']}\n"
                 output += f"兩點之間距離：{distance:.3f} 公里\n"
                 output += f"預計行駛時間（30 km/h）：{time_minutes:.2f} 分鐘\n\n"
 
