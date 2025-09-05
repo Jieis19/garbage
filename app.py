@@ -3,6 +3,7 @@ import base64
 import requests
 from flask import Flask, request, abort,send_file
 import matplotlib.pyplot as plt
+from matplotlib import font_manager
 # 使用 v3 SDK 的模块
 from linebot import LineBotApi, WebhookHandler
 from linebot.exceptions import InvalidSignatureError
@@ -87,21 +88,21 @@ def handle_follow(event):
     )
 @app.route("/plot")
 def send_plot():
-    # 範例：台北 (25.033, 121.565) 到 高雄 (22.627, 120.301)
     global lon1,lat1
-    lat2, lon2, label2 = 24.819735, 120.954769, "chayi"
+    lat2, lon2, label2 = 24.819735, 120.954769, "家益大舜"
     label1 = "car"
-    lat3, lon3, label3 = 24.819032, 120.954563,'park'
-
+    lat3, lon3, label3 = 24.819032, 120.954563,'飛機公園'
+    lat4, lon4, label4 = 24.81751537420669, 120.95724536859511,'hsinchu活動中心'
     distance = haversine(lon1, lat1, lon2, lat2)
 
     buf = io.BytesIO()
     plt.figure(figsize=(6,6))
-    plt.scatter([lon1, lon2,lon3], [lat1, lat2,lat3], color="red")
-    plt.plot([lon1, lon2,lon3], [lat1, lat2,lat3], "b--")
+    plt.scatter([lon1, lon2,lon3,lon4], [lat1, lat2,lat3,lat4], color="red")
+    plt.plot([lon1, lon2], [lat1, lat2], "b--")
     plt.text(lon1, lat1, f" {label1}", color="red")
     plt.text(lon2, lat2, f" {label2}", color="red")
     plt.text(lon3, lat3, f" {label3}", color="red")
+    plt.text(lon4, lat4, f" {label4}", color="red")
     plt.text((lon1+lon2)/2, (lat1+lat2)/2, f"{distance:.2f} km", color="blue", ha="center")
     plt.savefig(buf, format="png")
     plt.close()
