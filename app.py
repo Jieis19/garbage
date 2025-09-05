@@ -10,14 +10,44 @@ from linebot.exceptions import InvalidSignatureError
 from linebot.models import MessageEvent, TextMessage, TextSendMessage, ImageSendMessage
 from linebot.models.events import FollowEvent
 from matplotlib import font_manager
+import urllib.request
 app = Flask(__name__)
 
 # 使用环境变量（推荐）
 HANNEL_SECRET = "37386e7c6e3281ab80eb0ba61f3a00a3"
 
 # 加載中文字型
-font_path = "/path/to/NotoSansCJK-Regular.ttc"  # 替換為你下載字型的路徑
-prop = font_manager.FontProperties(fname=font_path)
+# 字型檔案相關設定
+font_folder = "./fonts"  # 字型檔案存儲資料夾
+font_filename = "NotoSansCJK-Regular.ttc"
+font_file_path = os.path.join(font_folder, font_filename)
+
+# 確保資料夾存在，若不存在則建立
+if not os.path.exists(font_folder):
+    print(f"資料夾 {font_folder} 不存在，正在建立...")
+    os.makedirs(font_folder)
+    print(f"已建立資料夾 {font_folder}。")
+else:
+    print(f"資料夾 {font_folder} 已存在。")
+
+# 確保字型檔案存在，若不存在則提示用戶下載
+if not os.path.exists(font_file_path):
+    print(f"字型文件未找到：{font_file_path}")
+    # 嘗試下載思源黑體作為字型
+    print("正在從網路下載思源黑體字型，請稍候...")
+    try:
+        url = "https://github.com/adobe-fonts/source-han-sans/raw/release/OTF/SimplifiedChinese/SourceHanSansSC-Regular.otf"
+        urllib.request.urlretrieve(url, font_file_path)
+        print("字型下載成功！")
+    except Exception as e:
+        print(f"字型下載失敗，請手動下載到 {font_file_path}。")
+        print(f"錯誤原因：{e}")
+        exit(1)
+else:
+    print(f"字型文件已存在：{font_file_path}")
+
+# 設置字型
+prop = font_manager.FontProperties(fname=font_file_path)
 
 CHANNEL_ACCESS_TOKEN = "wvyDe3P/k8r8Cu4nvfGdPdhoJkPrvsRXeqbVqksAz4DZrOkU706pQeQseLptAg9ulWF2aVLWezArTAJTu88FrSc825WtVct/x7pOGZUHjo/goY+nyENdcAv+X+/LuL0rLPCc9InUp7QPHUfNXKdlUgdB04t89/1O/w1cDnyilFU="
 
