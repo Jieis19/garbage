@@ -13,7 +13,10 @@ app = Flask(__name__)
 
 # 使用环境变量（推荐）
 HANNEL_SECRET = "37386e7c6e3281ab80eb0ba61f3a00a3"
-
+plt.rcParams['font.family'] = ['Microsoft JhengHei']  # Windows 系統
+# plt.rcParams['font.family'] = ['WenQuanYi Zen Hei']  # Linux 系統
+# plt.rcParams['font.family'] = ['STHeiti']  # MacOS 系統
+plt.rcParams['axes.unicode_minus'] = False  # 解決負號無法正常顯示的問題
 CHANNEL_ACCESS_TOKEN = "wvyDe3P/k8r8Cu4nvfGdPdhoJkPrvsRXeqbVqksAz4DZrOkU706pQeQseLptAg9ulWF2aVLWezArTAJTu88FrSc825WtVct/x7pOGZUHjo/goY+nyENdcAv+X+/LuL0rLPCc9InUp7QPHUfNXKdlUgdB04t89/1O/w1cDnyilFU="
 
 line_bot_api = LineBotApi(CHANNEL_ACCESS_TOKEN)
