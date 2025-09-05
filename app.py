@@ -9,14 +9,16 @@ from linebot import LineBotApi, WebhookHandler
 from linebot.exceptions import InvalidSignatureError
 from linebot.models import MessageEvent, TextMessage, TextSendMessage, ImageSendMessage
 from linebot.models.events import FollowEvent
+from matplotlib import font_manager
 app = Flask(__name__)
 
 # 使用环境变量（推荐）
 HANNEL_SECRET = "37386e7c6e3281ab80eb0ba61f3a00a3"
-#plt.rcParams['font.family'] = ['Microsoft JhengHei']  # Windows 系統
-plt.rcParams['font.family'] = ['WenQuanYi Zen Hei']  # Linux 系統
-# plt.rcParams['font.family'] = ['STHeiti']  # MacOS 系統
-plt.rcParams['axes.unicode_minus'] = False  # 解決負號無法正常顯示的問題
+
+# 加載中文字型
+font_path = "/path/to/NotoSansCJK-Regular.ttc"  # 替換為你下載字型的路徑
+prop = font_manager.FontProperties(fname=font_path)
+
 CHANNEL_ACCESS_TOKEN = "wvyDe3P/k8r8Cu4nvfGdPdhoJkPrvsRXeqbVqksAz4DZrOkU706pQeQseLptAg9ulWF2aVLWezArTAJTu88FrSc825WtVct/x7pOGZUHjo/goY+nyENdcAv+X+/LuL0rLPCc9InUp7QPHUfNXKdlUgdB04t89/1O/w1cDnyilFU="
 
 line_bot_api = LineBotApi(CHANNEL_ACCESS_TOKEN)
@@ -102,10 +104,10 @@ def send_plot():
     plt.figure(figsize=(6,6))
     plt.scatter([lon1, lon2,lon3,lon4], [lat1, lat2,lat3,lat4], color="red")
     plt.plot([lon1, lon2], [lat1, lat2], "b--")
-    plt.text(lon1, lat1, f" {label1}", color="red")
-    plt.text(lon2, lat2, f" {label2}", color="red")
-    plt.text(lon3, lat3, f" {label3}", color="red")
-    plt.text(lon4, lat4, f" {label4}", color="red")
+    plt.text(lon1, lat1, f" {label1}", color="red", fontproperties=prop)
+    plt.text(lon2, lat2, f" {label2}", color="red", fontproperties=prop)
+    plt.text(lon3, lat3, f" {label3}", color="red", fontproperties=prop)
+    plt.text(lon4, lat4, f" {label4}", color="red", fontproperties=prop)
     plt.text((lon1+lon2)/2, (lat1+lat2)/2, f"{distance:.2f} km", color="blue", ha="center")
     plt.savefig(buf, format="png")
     plt.close()
